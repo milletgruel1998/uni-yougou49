@@ -1,5 +1,5 @@
 // 基地址
-const BASE_URL = "https://www.uinav.com/api"
+const BASE_URL = "https://www.uinav.com"
 function request(params){
 	return new Promise((resolve,reject)=>{
 		// 发送请求前，打开loading
@@ -9,6 +9,7 @@ function request(params){
 		})
 		uni.request({
 			url:BASE_URL+params.url,
+			data:params.data,
 			success:(res)=>{
 				let {msg,status} = res.data.meta
 				if(status===200){

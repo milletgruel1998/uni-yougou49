@@ -64,21 +64,21 @@
 		// 封装获取轮播图的方法
 		async	getSwiperdata(){
 			let data = await	this.$request({
-					url:"/public/v1/home/swiperdata"
+					url:"/api/public/v1/home/swiperdata"
 				})
 				this.swiperList = data.message
 			},
 		// 封装导航栏的方法
 		async	getCatitems(){
 			let data = await	this.$request({
-					url:"/public/v1/home/catitems"
+					url:"/api/public/v1/home/catitems"
 				})
 				this.navList = data.message
 			},
 		// 封装楼层的方法
 		async getFloordata(){
 			let data = await	this.$request({
-					url:"/public/v1/home/floordata"
+					url:"/api/public/v1/home/floordata"
 				})
 				this.floorList = data.message
 			}

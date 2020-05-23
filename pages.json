@@ -22,6 +22,14 @@
 			"style": {
 				"navigationBarTitleText": "我的"
 			}
+		},
+		{
+			"path": "pages/search_list/search_list",
+			"style": {
+				"navigationBarTitleText": "搜索",
+				"enablePullDownRefresh":true,
+				"onReachBottomDistance":50
+			}
 		}
 	],
 	"globalStyle": {
