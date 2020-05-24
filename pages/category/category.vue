@@ -5,22 +5,24 @@
 		<!-- 主体模块 -->
 		<view class="content" v-if="catagoryList.length">
 			<view class="left">
-				<view class="content_item" :class="{active:activeIndex === index}" v-for="(item,index) in catagoryList" :key="index" @click="changeStyle(index)">{{item.cat_name}}</view>
+				<view class="content_item" :class="{active:activeIndex === index}" v-for="(item,index) in catagoryList" :key="index"
+				 @click="changeStyle(index)">{{item.cat_name}}</view>
 			</view>
-			<view class="right">
+			<scroll-view class="right" :scroll-top="scrollTop" scroll-y="true" @scroll="scroll">
 				<image class="rightTopImg" src="../../static/images/titleImage.png"></image>
 				<!-- 二级菜单 -->
 				<view class="category2" v-for="(cateItem2,cateIndex2) in catagoryList[activeIndex].children" :key="cateIndex2">
 					<view class="categoryName">/<text class="">{{cateItem2.cat_name}}</text>/</view>
 					<!-- 三级菜单 -->
 					<view class="category3_mod">
-						<view class="category3" @click="toSearchList(cateItem3.cat_name)" v-for="(cateItem3,cateIndex3) in cateItem2.children" :key="cateIndex3">
+						<view class="category3" @click="toSearchList(cateItem3.cat_name)" v-for="(cateItem3,cateIndex3) in cateItem2.children"
+						 :key="cateIndex3">
 							<image :src="cateItem3.cat_icon"></image>
 							<text>{{cateItem3.cat_name}}</text>
 						</view>
 					</view>
 				</view>
-			</view>
+			</scroll-view>
 		</view>
 	</view>
 </template>
@@ -28,14 +30,18 @@
 <script>
 	import searchMod from '@/components/searchMod.vue'
 	export default {
-		components:{
+		components: {
 			searchMod
 		},
 		//-------------------------data-------------------------
 		data() {
 			return {
 				activeIndex: 0, // 改变选中的样式，默认是第一个
-				catagoryList:[] // 分类列表数据
+				catagoryList: [], // 分类列表数据
+				scrollTop: 0, // 滚动条的默认位置
+				old: {
+					scrollTop: 0 // 滚动的距离
+				}
 			}
 		},
 		//-------------------------onLoad-------------------------
@@ -48,37 +54,47 @@
 			// 控制active样式
 			changeStyle(index) {
 				this.activeIndex = index
+				this.scrollTop = this.old.scrollTop
+				this.$nextTick(function() {
+					this.scrollTop = 0
+				});
 			},
 			// 封装获取菜单列表数据
-		async	getCategories(){
-			let data = await this.$request({
-					url:"/api/public/v1/categories"
+			async getCategories() {
+				let data = await this.$request({
+					url: "/api/public/v1/categories"
 				})
 				this.catagoryList = data.message
 			},
-			toSearchList(catName){
-				console.log(catName)
+			// 点击三级菜单，跳转到商品列表页
+			toSearchList(catName) {
 				uni.navigateTo({
-					url:`../search_list/search_list?catName=${catName}`
+					url: `../search_list/search_list?catName=${catName}`
 				})
+			},
+			// 每次让右侧滚动条从头开始
+			scroll(e) {
+				this.old.scrollTop = e.detail.scrollTop
 			}
 		}
 	}
 </script>
 
 <style scoped lang="less">
-	.category{
-		.content{
+	.category {
+		.content {
 			display: flex;
 			position: absolute;
 			top: 100rpx;
 			bottom: 0;
 			left: 0;
 			right: 0;
-			.left{
+
+			.left {
 				width: 198rpx;
 				overflow: auto;
-				.content_item{
+
+				.content_item {
 					height: 100rpx;
 					line-height: 100rpx;
 					border-bottom: 1rpx solid #eee;
@@ -86,12 +102,14 @@
 					background-color: #f4f4f4;
 					text-align: center;
 				}
-				.active{
+
+				.active {
 					background-color: #fff;
 					color: #eb4450;
 					font-weight: 700;
 					position: relative;
-					&::before{
+
+					&::before {
 						position: absolute;
 						content: '';
 						top: 20rpx;
@@ -102,37 +120,44 @@
 					}
 				}
 			}
-			.right{
+
+			.right {
 				flex: 1;
 				overflow: scroll;
-				.rightTopImg{
+
+				.rightTopImg {
 					width: 520rpx;
 					height: 180rpx;
 					margin: 20rpx 0 0 16rpx;
 				}
+
 				/* 二级菜单 */
-				.categoryName{
+				.categoryName {
 					color: #e0e0e0;
 					text-align: center;
 					margin-top: 50rpx;
-					text{
+
+					text {
 						color: #000;
-						font-weight:700;
+						font-weight: 700;
 						font-size: 40rpx;
 						margin: 0 36rpx;
 					}
 				}
+
 				/* 三级菜单 */
-				.category3_mod{
+				.category3_mod {
 					display: flex;
 					flex-wrap: wrap;
-					.category3{
+
+					.category3 {
 						width: 33.33%;
 						display: flex;
 						flex-direction: column;
 						align-items: center;
 						margin-bottom: 20rpx;
-						image{
+
+						image {
 							width: 120rpx;
 							height: 120rpx;
 						}

@@ -3,7 +3,7 @@
 		<!-- 搜索框 -->
 		<view class="search_box">
 			<icon type="search" size="16" color="#bbb" />
-			<input type="text" v-model="keyWord" confirm-type="search" @confirm="searchGoods"/>
+			<input type="text" v-model="keyWord" confirm-type="search" @confirm="searchGoods" />
 		</view>
 		<!-- 过滤栏 -->
 		<view class="filter_box">
@@ -34,7 +34,8 @@
 				filterList: ['综合', '销量', '价格'],
 				goodsList: [], // 商品列表
 				keyWord: '', // 关键字
-				goodsPage:1 // 默认加载第一页数据
+				goodsPage: 1, // 默认加载第一页数据
+				isRequesting:false // 默认不发送请求
 			}
 		},
 		//-------------------------onload-------------------------
@@ -63,6 +64,12 @@
 				this.filterIndex = index
 			},
 			async getGoodsList() {
+				// 调用此函数前，应该先判断isRequesting的状态
+				if(this.isRequesting){
+					return
+				}
+				// 发送请求前，将isRequesting设置为true,表示正在请求中
+				this.isRequesting = true
 				const pageCount = 6 // 页容量
 				let data = await this.$request({
 					url: "/api/public/v1/goods/search",
@@ -70,12 +77,15 @@
 						query: this.keyWord,
 						pagenum: this.goodsPage,
 						pagesize: pageCount
-					}
+					},
+					showLoading: false
 				})
-				this.goodsList = [...this.goodsList,...data.message.goods]
+				this.goodsList = [...this.goodsList, ...data.message.goods]
+				// 请求结束后，将isRequesting设置为false,表示请求结束
+				this.isRequesting = false
 			},
 			// 点击键盘右下角的搜索按钮，触发的点击事件
-			searchGoods(){
+			searchGoods() {
 				this.getGoodsList()
 			}
 		}
