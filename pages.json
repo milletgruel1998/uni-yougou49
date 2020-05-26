@@ -30,6 +30,12 @@
 				"enablePullDownRefresh":true,
 				"onReachBottomDistance":50
 			}
+		},
+		{
+			"path": "pages/item/item",
+			"style": {
+				"navigationBarTitleText": "商品详情"
+			}
 		}
 	],
 	"globalStyle": {

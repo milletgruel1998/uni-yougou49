@@ -14,4 +14,6 @@
 
 <style>
 	/*每个页面公共css */
+	/* 只能在App.vue中引入样式，main.js兼容性不好 */
+	@import url("/css/iconfont.css");
 </style>
