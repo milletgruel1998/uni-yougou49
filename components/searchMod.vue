@@ -1,6 +1,6 @@
 <template>
 	<view class="search_mod">
-		<view class="search">
+		<view class="search" @click="toSearchPage">
 			<icon type="search" size="16" color="#bbb"/>
 			<text>搜索</text>
 		</view>
@@ -9,7 +9,13 @@
 
 <script>
 	export default {
-		
+		methods:{
+			toSearchPage(){
+				uni.navigateTo({
+					url:"/pages/search/search"
+				})
+			}
+		}
 	}
 </script>
 

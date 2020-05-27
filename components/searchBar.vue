@@ -2,7 +2,7 @@
 	<view class="search_box">
 		<icon class="iconSearch" type="search" size="16" color="#bbb" />
 		<input type="text" v-model.trim="inputVal" confirm-type="search" @confirm="searchGoods" />
-		<icon class="clearVal" @click="clearVal" type="clear" size="16" color="#bbb" />
+		<icon class="clearVal" v-show="inputVal" @click="clearVal" type="clear" size="16" color="#bbb" />
 	</view>
 </template>
 

@@ -12,7 +12,7 @@
 			}
 		},
 		{
-			"path": "pages/shopping_car/shopping_car",
+			"path": "pages/cart/cart",
 			"style": {
 				"navigationBarTitleText": "购物车"
 			}
@@ -26,7 +26,7 @@
 		{
 			"path": "pages/search_list/search_list",
 			"style": {
-				"navigationBarTitleText": "搜索",
+				"navigationBarTitleText": "搜索列表",
 				"enablePullDownRefresh":true,
 				"onReachBottomDistance":50
 			}
@@ -35,6 +35,12 @@
 			"path": "pages/item/item",
 			"style": {
 				"navigationBarTitleText": "商品详情"
+			}
+		},
+		{
+			"path": "pages/search/search",
+			"style": {
+				"navigationBarTitleText": "搜索"
 			}
 		}
 	],
@@ -58,7 +64,7 @@
 	        "selectedIconPath": "static/tabs/icon_category_active@3x.png",
 	        "text": "分类"
 	    },{
-	        "pagePath": "pages/shopping_car/shopping_car",
+	        "pagePath": "pages/cart/cart",
 	        "iconPath": "static/tabs/icon_cart@3x.png",
 	        "selectedIconPath": "static/tabs/icon_cart_active@3x.png",
 	        "text": "购物车"

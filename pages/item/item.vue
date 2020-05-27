@@ -68,7 +68,7 @@
 				<view><text>联系客服</text></view>
 				<button open-type="contact">客服</button>
 			</view>
-			<view class="cart">
+			<view class="cart" @click="toCart">
 				<text class="iconfont icon-gouwuchekong"></text>
 				<view><text>购物车</text></view>
 			</view>
@@ -79,6 +79,8 @@
 				<text>立即购买</text>
 			</view>
 		</view>
+		<!-- 分享的图片 -->
+		<canvas class="canvas" canvas-id="canvasId"></canvas>
 	</view>
 </template>
 
@@ -109,6 +111,11 @@
 					url: "/api/public/v1/goods/detail?goods_id=" + this.goodsId
 				})
 				this.goodsDetail = data.message
+				
+				//-------------------------------canvas------------------------------
+				// 创建canvas，返回一个CanvasContext对象
+				// const CONTEXT = uni.createCanvasContext("canvasId",this)
+				
 			},
 			// 预览轮播图图片
 			previewImg(index) {
@@ -120,6 +127,12 @@
 					current: index, // 当前预览图片的索引
 					// current:urls[index], // 当前预览图片的链接
 					urls,
+				})
+			},
+			// 点击购物车，跳转到购物车页面
+			toCart(){
+				uni.switchTab({
+					url:"../cart/cart"
 				})
 			}
 		},
