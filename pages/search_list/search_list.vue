@@ -16,7 +16,7 @@
 			<view class="goodsIntro_mod" v-for="(item,index) in goodsList" :key="index" @click="toGoodsDetail(item.goods_id)">
 				<!-- 商品图片 -->
 				<view class="goodsImg">
-					<image :src="item.goods_big_logo"></image>
+					<image :src="item.goods_small_logo"></image>
 				</view>
 				<!-- 商品说明 -->
 				<view class="goodsIntro">

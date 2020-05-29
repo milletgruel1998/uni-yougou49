@@ -10,12 +10,12 @@
 		</view>
 		<!-- 价格 -->
 		<view class="goodsPrice">
-			￥<text>{{goodsDetail.goods_price}}</text>
+			￥<text>{{goodsDetail.goods_price||"--"}}</text>
 		</view>
 		<!-- 商品说明 -->
 		<view class="goodsIntro_mod">
 			<view class="goodsIntro">
-				<text>{{goodsDetail.goods_name}}</text>
+				<text>{{goodsDetail.goods_name||""}}</text>
 			</view>
 			<view class="goodsCollect">
 				<text class="iconfont icon-fenxiang"></text>
@@ -72,7 +72,7 @@
 				<text class="iconfont icon-gouwuchekong"></text>
 				<view><text>购物车</text></view>
 			</view>
-			<view class="addCart">
+			<view class="addCart" @click="addCart">
 				<text>加入购物车</text>
 			</view>
 			<view class="nowBuy">
@@ -134,6 +134,35 @@
 				uni.switchTab({
 					url:"../cart/cart"
 				})
+			},
+			// 加入购物车
+			addCart(){
+				let goodsId = this.goodsDetail.goods_id // 商品id
+				// 1.获取购物车数据
+				let goodsArr= uni.getStorageSync("cart")||[]
+				// 2.更新购物车数据
+			let goods = goodsArr.find(item=>{
+					return item.goodsId === goodsId
+				})
+				if(goods){
+					// 商品已存在
+					goods.isSelect = true
+					goods.num = goods.num + 1
+					goodsArr = [...new Set([goods,...goodsArr])]
+				}else{
+					// 商品不存在
+					goodsArr.unshift({
+						goodsId,
+						isSelect:true,
+						num:1
+					})
+				}
+				// 提示用户添加商品成功
+				uni.showToast({
+					title:"添加购物车成功"
+				})
+				// 3.重新存储购物车数据
+				uni.setStorageSync("cart",goodsArr)
 			}
 		},
 		//------------------------onShareAppMessage ------------------------
