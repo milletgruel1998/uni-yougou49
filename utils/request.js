@@ -13,7 +13,9 @@ function request(params) {
 		}
 		uni.request({
 			url: BASE_URL + params.url,
+			method:params.method,
 			data: params.data,
+			header:params.header,
 			success: (res) => {
 				let {
 					msg,

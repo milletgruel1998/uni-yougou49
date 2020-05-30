@@ -1,7 +1,7 @@
 <template>
 	<view class="search_mod">
 		<view class="search" @click="toSearchPage">
-			<icon type="search" size="16" color="#bbb"/>
+			<icon class="searchIcon" type="search" size="16" color="#bbb"/>
 			<text>搜索</text>
 		</view>
 	</view>
@@ -37,7 +37,7 @@
 				color: #bbb;
 				margin-left: 360rpx;
 			}
-			icon{
+			.searchIcon{
 				position: absolute;
 				top: 16rpx;
 				left: 310rpx;

@@ -42,6 +42,24 @@
 			"style": {
 				"navigationBarTitleText": "搜索"
 			}
+		},
+		{
+			"path": "pages/login/login",
+			"style": {
+				"navigationBarTitleText": "登录"
+			}
+		},
+		{
+			"path": "pages/pay/pay",
+			"style": {
+				"navigationBarTitleText": "支付"
+			}
+		},
+		{
+			"path": "pages/order_result/order_result",
+			"style": {
+				"navigationBarTitleText": "订单页"
+			}
 		}
 	],
 	"globalStyle": {

@@ -19,13 +19,13 @@
 			<text>优购生活馆</text>
 		</view>
 		<!-- 优购生活馆主体 -->
-		<view class="goodsShow-body" v-for="(item,index) in localCartInfo" :key="index" @click="toGoodsDetail(item.goods_id)">
+		<view class="goodsShow-body" v-for="(item,index) in mergeCartInfo" :key="index" @click="toGoodsDetail(item.goods_id)">
 			<view class="icon" @click.stop="changeIcon(item)">
 				<text class="iconfont " :class="item.isSelect?'icon-checked':'icon-unchecked'"></text>
 			</view>
 			<view class="goodsInfor">
 				<view>
-					<image v-if="item.goods_small_logo" :src="item.goods_small_logo"></image>
+					<image :src="item.goods_small_logo"></image>
 				</view>
 				<!-- 文字 -->
 				<view class="information">
@@ -56,7 +56,7 @@
 					<text>包含运费</text>
 				</view>
 			</view>
-			<view class="payMoney">
+			<view class="payMoney" @click="toPay">
 				<text>结算（<text>{{goodsTotalNum}}</text>）</text>
 			</view>
 		</view>
@@ -68,14 +68,18 @@
 		//----------------------data----------------------
 		data() {
 			return {
-				serveCartGoodsInfo: [], // 从服务器返回的购物车商品信息
-				localCartInfo: [] // localStorage中的购物车信息
+				localCartInfo: [], // Storage中的数据
+				mergeCartInfo:[] // Storage和服务器返回的数据----合并后的数据
 			}
 		},
 		//----------------------onShow----------------------
 		onShow() {
 			// 获取localStorage中的购物车
-			this.localCartInfo = uni.getStorageSync("cart") || []
+			this.localCartInfo = uni.getStorageSync("cart")||[]
+			// 如果Storage中 的cart是空的话，无须发送请求
+			if(this.localCartInfo.length===0){
+				return 
+			}
 			// 遍历cart数组，得到商品id
 			let goodsIdArr = this.localCartInfo.map(item => {
 				return item.goodsId
@@ -91,15 +95,13 @@
 				let data = await this.$request({
 					url: '/api/public/v1/goods/goodslist?goods_ids=' + goodsId
 				})
-				this.serveCartGoodsInfo = data.message
-				this.localCartInfo = this.localCartInfo.map(item => {
+				let serveCartGoodsInfo = data.message
+				this.mergeCartInfo= this.localCartInfo.map(item => {
 					// newData 返回在服务器返回的数据中与本地购物车中id一样的数据
-					let newData = this.serveCartGoodsInfo.find(goods => {
+					let newData = serveCartGoodsInfo.find(goods => {
 						return goods.goods_id === item.goodsId
 					})
-					return { ...item,
-						...newData
-					}
+					return { ...item,...newData}
 				})
 			},
 			// 点击商品，切换选中/未选中的图标
@@ -116,7 +118,7 @@
 						content: "您确定要删除这件商品吗",
 						success: (res) => {
 							if (res.confirm) {
-								this.localCartInfo.splice(index, 1)
+								this.mergeCartInfo.splice(index, 1)
 							}
 						}
 					})
@@ -126,7 +128,7 @@
 			addGoods(item) {
 				item.num = item.num + 1
 			},
-			// 全选按钮 改变
+			// 全选按钮 改变选中状态
 			allSelect() {
 				this.isAllSelect = !this.isAllSelect
 			},
@@ -134,6 +136,28 @@
 			toGoodsDetail(goodsId) {
 				uni.navigateTo({
 					url: "/pages/item/item?goodsId=" + goodsId
+				})
+			},
+			// 点击结算，跳转到支付页
+			toPay(){
+				// 判断商品总数是否为0
+				if(this.goodsTotalNum === 0){
+					uni.showToast({
+						title:'未选中商品',
+						icon:'none'
+					})
+					return
+				}
+				// 判断用户是否已登录
+				let token = uni.getStorageSync("token")
+				if(!token){
+					uni.navigateTo({
+						url:"/pages/login/login"
+					})
+					return
+				}
+				uni.navigateTo({
+					url:"/pages/pay/pay"
 				})
 			}
 		},
@@ -153,27 +177,46 @@
 					// }
 					// return true
 					// this.localCartInfo中的每一项的isSelect如果都返回true的话。every最终返回true
-					return this.localCartInfo.every(item => {
+					return this.mergeCartInfo.every(item => {
 						return item.isSelect
 					})
 				},
 				set(selectStatus) {
-					this.localCartInfo.forEach(item => {
+					this.mergeCartInfo.forEach(item => {
 						item.isSelect = selectStatus
 					})
 				}
 			},
 			// 计算商品总数
 			goodsTotalNum() {
-				return this.localCartInfo.reduce((sum, item) => {
-					return sum + item.num
+				return this.mergeCartInfo.reduce((sum, item) => {
+					return sum + (item.isSelect ? item.num : 0)
 				}, 0)
 			},
 			// 计算商品价格
 			goodsTotalPrice() {
-				return this.localCartInfo.reduce((sum, item) => {
-						return sum + (item.isSelect?(item.goods_price * item.num):0)
+				return this.mergeCartInfo.reduce((sum, item) => {
+					return sum + (item.isSelect ? (item.goods_price * item.num) : 0)
 				}, 0)
+			}
+		},
+		//----------------------watch----------------------
+		watch: {
+			// 如果mergeCartInfo有变化，需要更新Storage中存储的数据
+			mergeCartInfo: {
+				// 由于监听的是mergeCartInfo数组里面对象的属性，并不是数组本身，所以需要深度监听
+				handler() {
+					let newData = this.mergeCartInfo.map(item => {
+						return {
+							goodsId: item.goodsId,
+							isSelect: item.isSelect,
+							num: item.num
+						}
+					})
+					// 将更新过的数据，更新到Storage中
+					uni.setStorageSync("cart", newData)
+				},
+				deep: true
 			}
 		}
 	}

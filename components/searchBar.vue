@@ -44,7 +44,7 @@
 		left: 0;
 		width: 100%;
 
-		input {
+		>input {
 			display: inline-block;
 			height: 60rpx;
 			width: 100%;
